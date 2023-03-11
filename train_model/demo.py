@@ -27,13 +27,13 @@ def make_test_data(cfg, img_path_list, device):
 
 
 @logger
-def load_pretrain_network(cfg, device, ckpt, net_name='aod', model_dir='model/'):
+def load_pretrain_network(cfg, device, ckpt, net_name, model_dir='model/'):
     net = AODnet().to(device)
     net.load_state_dict(torch.load(os.path.join(model_dir, net_name, ckpt))['state_dict'])
     return net
 
 
-def main(cfg, Test_folder_path, epoch_names, model_name):
+def main(cfg, Test_folder_path, epoch_name, model_name):
     # -------------------------------------------------------------------
     # basic config
     print(cfg)
@@ -46,20 +46,18 @@ def main(cfg, Test_folder_path, epoch_names, model_name):
     test_images = make_test_data(cfg, test_file_path, device)
     # -------------------------------------------------------------------
     # load network
-    for epoch_name in epoch_names:
-        network = load_pretrain_network(cfg, device, ckpt=epoch_name)
-        # -------------------------------------------------------------------
-        # set network weights
-        # -------------------------------------------------------------------
-        # start train
-        network.eval()
-        for idx, im in enumerate(test_images):
-            dehaze_image = network(im)
-            img_path = Test_folder_path + "Output/" + model_name + epoch_name + '/'
-            if not os.path.isdir(img_path):
-                os.makedirs(img_path)
-            print(img_path + test_file_path[idx])
-            torchvision.utils.save_image(dehaze_image,  img_path + test_file_path[idx].split("/")[-1])
+    network = load_pretrain_network(cfg, device, ckpt=epoch_name, net_name=model_name)
+    # -------------------------------------------------------------------
+    # set network weights
+    # -------------------------------------------------------------------
+    # start train
+    network.eval()
+    for idx, im in enumerate(test_images):
+        dehaze_image = network(im)
+        img_path = Test_folder_path + "Output/" + model_name + '-' + epoch_name + '/'
+        if not os.path.isdir(img_path):
+            os.makedirs(img_path)
+        torchvision.utils.save_image(dehaze_image,  img_path + test_file_path[idx].split("/")[-1])
 
 def run_dehaze(sample_path, epoch_names, model_name):
     config_args, unparsed_args = get_config()

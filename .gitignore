@@ -1,0 +1,7 @@
+train_model/node_modules/
+train_model/__pycache__/
+train_model/train/
+train_model/package-lock.json
+
+test_model/__pycache__/
+test_model/Samples/

@@ -4,10 +4,11 @@ from demo import run_dehaze
 
 test_root = 'Samples/'
 model_path = 'model/'
-model_name = input("enter model name") + '/'
+model_name = input("enter model name")
 
 epoch_names = [f for f in listdir(model_path + model_name) if isfile(join(model_path + model_name, f))]
 test_cases = ['Thin_haze/','Moderate_haze/', 'Thick_haze/']
 
-for test_case in test_cases:
-    run_dehaze(test_root + test_case, epoch_names, model_name )
+for epoch_name in epoch_names:
+    for test_case in test_cases:
+        run_dehaze(test_root + test_case, epoch_name, model_name )
